@@ -1,5 +1,4 @@
-from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import View
 
 from patron.models import Image
@@ -9,10 +8,19 @@ class IndexView(View):
     template_name = 'patron/index.html'
 
     def get(self, request, *args, **kwargs):
-        return render(request, self.template_name)
+        images = {'images': Image.objects.all()}
+        return render(request, self.template_name, context=images)
 
-    def post(self,request):
+    def post(self, request):
         image = request.FILES.get('image-file')
-        uploaded_image = Image(name='sample.jpg', image=image)
+        image_name = str(image.name).replace(' ', '_')
+        uploaded_image = Image(name=image_name, image=image)
         uploaded_image.save()
-        return render(request, self.template_name)
+        return redirect('image_view', image_id=uploaded_image.pk)
+
+
+class ImageView(View):
+    template_name = 'patron/image_view.html'
+
+    def get(self, request, image_id):
+        return render(request, self.template_name, context={'image': image_id})

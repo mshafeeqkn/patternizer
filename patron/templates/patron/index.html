@@ -16,14 +16,14 @@
 <body>
 
 <div class="container">
-  <h2>Load new image</h2>
-  <form method="post">
+  <h3>Load new image</h3>
+  <form method="post" action="{% url 'patron' %}" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="row">
       <div class="col-4">
         <div class="form-group">
           <label for="image-file">Please select new image</label>
-          <input type="file" class="form-control-file" id="image-file">
+          <input type="file" name="image-file" class="form-control-file" id="image-file">
         </div>
       </div>
       <div class="col-4">
@@ -31,6 +31,21 @@
       </div>
     </div>
   </form>
+
+  <div class="clear-fix-medium"></div>
+  <div>
+    <h3>Previous uploads</h3>
+    <table>
+      <tbody>
+        {% for image in images %}
+        <tr>
+          <td><a href="{% url 'image_view' image.id %}">{{ image.name }}</a></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <!--img src="/media/images/Admit_Card_IIC.jpg" alt="Uploaded image"/-->
 </div>
 
 
