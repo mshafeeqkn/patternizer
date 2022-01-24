@@ -31,21 +31,17 @@ img {
 
 .drag-item {
     position: absolute;
-    margin-top: 10px;
-    border: solid 1px rgba(211, 211, 211, 0.2);
     padding: 5px 3px 3px 3px;
     display: inline-block;
     background-color: rgba(211, 211, 211, 0.2);
 }
 
 .drag-item:hover {
-    border: solid 1px rgba(211, 211, 211, 1.0);
-    background-color: rgba(211, 211, 211, 1.0);
+    background-color: rgba(211, 211, 211, 0.8);
 }
 
 .drag-btn, .apply-btn, .drag-text {
     padding: 3px 5px;
-    border: solid 1px lightgrey;
 }
 
 .drag-btn {
