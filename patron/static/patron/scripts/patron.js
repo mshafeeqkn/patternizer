@@ -47,12 +47,16 @@ function dragElement(elmnt) {
 $(document).ready(function () {
     $('.apply-btn').on('click', function () {
         var btnSize = $(this).get(0).getBoundingClientRect();
-        var draggerSize = $('#drag-item').get(0).getBoundingClientRect();
+        var dragItem = $('#drag-item');
+        var draggerSize = dragItem.get(0).getBoundingClientRect();
 
         $(this).hide();
         $('.drag-btn').hide();
 
-        document.getElementById("drag-item").style.top = draggerSize.top + (btnSize.bottom - btnSize.top) + 'px';
-        $('#drag-item').css({'background-color': "rgba(255, 255, 255, 0)"});
+        dragItem.css(
+            {
+                'background-color': "rgba(255, 255, 255, 0)",
+                'top': draggerSize.top + (btnSize.bottom - btnSize.top - 2) + 'px'
+            });
     });
 });
