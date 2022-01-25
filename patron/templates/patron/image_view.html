@@ -86,9 +86,7 @@
 
     <form method="post" action="{% url 'image_view' imgId %}" id="patron-form">
       {% csrf_token %}
-      <input type="hidden" name="label-data" id="label-data">
-      <input type="hidden" name="paper-size" id="paper-size">
-      <input type="hidden" name="copies-per-page" id="copies-per-page">
+      <input type="hidden" name="image-data" id="image-data">
     </form>
   </div>
 </div>

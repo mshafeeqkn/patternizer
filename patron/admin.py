@@ -6,8 +6,8 @@ from patron.models import Image
 
 
 class ImageAdmin(admin.ModelAdmin):
-    fields = ['name', 'image']
-    list_display = ['id', 'name', 'image']
+    fields = ['name', 'image', 'paper_size', 'num_img', 'labels']
+    list_display = ['id', 'name', 'image', 'paper_size', 'num_img', 'labels']
 
 
 admin.site.register(Image, ImageAdmin)

@@ -130,32 +130,37 @@ function addNewLabel() {
 }
 
 function collectData() {
-    collectLabelData();
-    collectPaperSize();
-    collectNumCopies();
+    let ret = {};
+    ret.labels = collectLabelData();
+    ret.paper = collectPaperSize();
+    ret.copies = collectNumCopies();
+    let jsonString = JSON.stringify(ret);
+    $('#image-data').val(jsonString);
     $('#patron-form').submit();
 }
 
 function collectNumCopies() {
-    let row = $('#paper-row').val();
-    let col = $('#paper-col').val();
-    $('#copies-per-page').val("@$" + row + "$" + col);
+    let ret = {};
+    ret.numRow = $('#paper-row').val();
+    ret.numCol = $('#paper-col').val();
+    return ret;
 }
 
 function collectPaperSize() {
-    let width = $('#paper-width').val();
-    let height = $('#paper-height').val();
-    $('#paper-size').val("@$" + width + "$" + height);
+    let ret = {};
+    ret.width = $('#paper-width').val();
+    ret.height = $('#paper-height').val();
+    return ret;
 }
 
 function collectLabelData() {
-    let data = "";
+    let ret = [];
     $('#label-list > tbody tr').each(function () {
-        let label = $(this).find('td').eq(1).text();
-        let x_cod = $(this).find('td').eq(2).text();
-        let y_cod = $(this).find('td').eq(3).text();
-        data += "@$" + label + "$" + x_cod + "$" + y_cod;
+        let item = {};
+        item.label = $(this).find('td').eq(1).text();
+        item.x_cod = $(this).find('td').eq(2).text();
+        item.y_cod = $(this).find('td').eq(3).text();
+        ret.push(item);
     });
-
-    $('#label-data').val(data);
+    return ret;
 }

@@ -1,3 +1,5 @@
+import json
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 
@@ -25,8 +27,13 @@ class ImageView(View):
 
     def get(self, request, image_id):
         image = get_object_or_404(Image, pk=image_id)
-        return render(request, self.template_name, context={'image': image.name, 'imgId': image.id})
+        return render(request, self.template_name, context={'image': image.name, 'imgId': image_id})
 
     def post(self, request, image_id):
         image = get_object_or_404(Image, pk=image_id)
-        return render(request, self.template_name, context={'image': image.name, 'imgId': image.id})
+        json_data = json.loads(request.POST.get('image-data', "{}"))
+        image.labels = json_data['labels']
+        image.paper_size = json_data['paper']
+        image.num_img = json_data['copies']
+        image.save()
+        return render(request, self.template_name, context={'image': image.name, 'imgId': image_id})
