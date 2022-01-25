@@ -1,19 +1,19 @@
 function dragElement(draggerId) {
     let draggerElement = $('#' + draggerId);
-
     let x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+    let tableBody = $('#label-list > tbody');
+    const draggerIndex = parseInt(draggerId.split("-").at(-1));
     const imageSize = $('#image').get(0).getBoundingClientRect();
     const draggerSize = draggerElement.get(0).getBoundingClientRect();
 
-    draggerElement.css(
-        {
-            'top': (imageSize.top + (imageSize.bottom - imageSize.top) / 2) + "px",
-            'left': (imageSize.left + (imageSize.right - imageSize.left) / 2) + "px"
-        }
-    );
+    const defTop = (imageSize.top + (imageSize.bottom - imageSize.top) / 2);
+    const defLeft = (imageSize.left + (imageSize.right - imageSize.left) / 2);
+
+    draggerElement.css({'top': defTop + "px", 'left': defLeft + "px"});
 
     $('#' + draggerId + "-handle").get(0).onmousedown = dragMouseDown;
     registerApplyButton();
+    updatePositionInTable(tableBody.find('tr').eq(draggerIndex), defTop, defLeft);
 
     function dragMouseDown(e) {
         e = e || window.event;
@@ -44,6 +44,13 @@ function dragElement(draggerId) {
         const left = (draggerElement.get(0).offsetLeft - x1);
         if (left > imageSize.left && left < imageSize.right - (draggerSize.right - draggerSize.left))
             draggerElement.get(0).style.left = left + "px";
+
+        updatePositionInTable(tableBody.find('tr').eq(draggerIndex), top, left);
+    }
+
+    function updatePositionInTable(row, top, left) {
+        row.find('td').eq(2).text((left - imageSize.left) + '');
+        row.find('td').eq(3).text((top - imageSize.top) + '');
     }
 
     function closeDragElement() {
@@ -76,3 +83,28 @@ $(document).ready(function () {
         addNewLabel();
     });
 });
+
+let counter = 0;
+
+function addNewLabel() {
+    let labelField = $('#text-field');
+    let label = labelField.val();
+    let textLabel = '<div class="drag-item" id="drag-item-' + counter + '">' +
+        '<div>' +
+            '<span class="drag-btn" id="drag-item-' + counter + '-handle"><i class="fa fa-arrows text-success" aria-hidden="true"></i></span>' +
+            '<span class="apply-btn"><i class="fa fa-check text-success" aria-hidden="true"></i></span>' +
+        '</div>' +
+        '<div class="drag-text">' + label + '</div>' +
+    '</div>';
+    $('.container').append(textLabel);
+
+    labelField.val("");
+
+    if(counter === 0)
+        $("#label-list > tbody").empty();
+
+    $('#label-list > tbody').append('<tr><td>' + (counter + 1) + '</td><td>' + label + '</td><td></td><td></td></tr>');
+    dragElement("drag-item-" + counter);
+
+    counter++;
+}
