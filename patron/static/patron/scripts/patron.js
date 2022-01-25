@@ -45,12 +45,13 @@ function dragElement(draggerId) {
         if (left > imageSize.left && left < imageSize.right - (draggerSize.right - draggerSize.left))
             draggerElement.get(0).style.left = left + "px";
 
-        updatePositionInTable(tableBody.find('tr').eq(draggerIndex), top, left);
+        updatePositionInTable(tableBody.find('tr').eq(draggerIndex));
     }
 
-    function updatePositionInTable(row, top, left) {
-        row.find('td').eq(2).text((left - imageSize.left) + '');
-        row.find('td').eq(3).text((top - imageSize.top) + '');
+    function updatePositionInTable(row) {
+        let labelBox = $('#drag-text-' + draggerIndex).get(0).getBoundingClientRect();
+        row.find('td').eq(2).text((labelBox.left - imageSize.left) + '');
+        row.find('td').eq(3).text((imageSize.bottom - labelBox.bottom) + '');
     }
 
     function closeDragElement() {
@@ -61,13 +62,13 @@ function dragElement(draggerId) {
     }
 
     function registerApplyButton() {
-        $('.apply-btn').on('click', function () {
+        $('#apply-btn-' + draggerIndex).on('click', function () {
             const btnSize = $(this).get(0).getBoundingClientRect();
             const dragItem = $('#' + draggerId);
             const draggerSize = dragItem.get(0).getBoundingClientRect();
 
             $(this).hide();
-            $('.drag-btn').hide();
+            $('#drag-item-' + draggerIndex + '-handle').hide();
 
             dragItem.css(
                 {
@@ -92,9 +93,9 @@ function addNewLabel() {
     let textLabel = '<div class="drag-item" id="drag-item-' + counter + '">' +
         '<div>' +
             '<span class="drag-btn" id="drag-item-' + counter + '-handle"><i class="fa fa-arrows text-success" aria-hidden="true"></i></span>' +
-            '<span class="apply-btn"><i class="fa fa-check text-success" aria-hidden="true"></i></span>' +
+            '<span class="apply-btn" id="apply-btn-' + counter + '"><i class="fa fa-check text-success" aria-hidden="true"></i></span>' +
         '</div>' +
-        '<div class="drag-text">' + label + '</div>' +
+        '<div class="drag-text" id="drag-text-' + counter + '">' + label + '</div>' +
     '</div>';
     $('.container').append(textLabel);
 
@@ -108,3 +109,11 @@ function addNewLabel() {
 
     counter++;
 }
+
+
+$('#text-field').val('Mohammed Shafeeque K N');
+addNewLabel();
+$('#text-field').val('Abdulla K N');
+addNewLabel();
+$('#text-field').val('9895653263');
+addNewLabel();
