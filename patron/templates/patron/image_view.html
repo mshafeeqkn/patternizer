@@ -16,7 +16,7 @@
 </head>
 
 <body>
-<div class="container">
+<div class="container pb-4">
   <h4>Add Label</h4>
   <div class="row">
     <div class="col-4">
@@ -32,7 +32,7 @@
   <img src="/media/images/{{ image }}" alt="uploaded-image" id="image">
 
   <table class="table table-sm mt-4" id="label-list">
-  <thead class="thead-light">
+    <thead class="thead-light">
     <tr>
       <th scope="col">#</th>
       <th scope="col">Label</th>
@@ -40,17 +40,61 @@
       <th scope="col">Y-Coord</th>
       <th scope="col">Action</th>
     </tr>
-  </thead>
-  <tbody>
+    </thead>
+    <tbody>
     <tr>
       <td colspan="5" class="text-center">List is empty</td>
     </tr>
-  </tbody>
-</table>
-</div>
+    </tbody>
+  </table>
 
+  <div class="mt-4">
+    <h4>Print paper size</h4>
+    <div>
+      <div class="paper-dim">
+        <input type="text" name="text" class="form-control form-control-sm" id="paper-width" placeholder="Width (mm)">
+      </div>
+      <span class="p-2">X</span>
+      <div class="paper-dim">
+        <input type="text" name="text" class="form-control form-control-sm" id="paper-height" placeholder="Height (mm)">
+      </div>
+    </div>
+    <div class="my-3">
+      <div class="paper-size-card">A1</div>
+      <div class="paper-size-card">A2</div>
+      <div class="paper-size-card">A3</div>
+      <div class="paper-size-card">A4</div>
+      <div class="paper-size-card">A5</div>
+    </div>
+
+    <div class="mt-4">
+      <h4>Number of copies per page</h4>
+      <div>
+        <div class="paper-dim">
+          <input type="text" name="text" class="form-control form-control-sm" id="paper-row" placeholder="Number of rows">
+        </div>
+        <span class="p-2">X</span>
+        <div class="paper-dim">
+          <input type="text" name="text" class="form-control form-control-sm" id="paper-col" placeholder="Number of column">
+        </div>
+      </div>
+    </div>
+
+    <div class="my-3">
+      <input class="btn btn-primary" type="button" value="Submit" id="submit-button">
+    </div>
+
+    <form method="post" action="{% url 'image_view' imgId %}" id="patron-form">
+      {% csrf_token %}
+      <input type="hidden" name="label-data" id="label-data">
+      <input type="hidden" name="paper-size" id="paper-size">
+      <input type="hidden" name="copies-per-page" id="copies-per-page">
+    </form>
+  </div>
+</div>
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
         crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"

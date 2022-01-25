@@ -25,4 +25,8 @@ class ImageView(View):
 
     def get(self, request, image_id):
         image = get_object_or_404(Image, pk=image_id)
-        return render(request, self.template_name, context={'image': image.name})
+        return render(request, self.template_name, context={'image': image.name, 'imgId': image.id})
+
+    def post(self, request, image_id):
+        image = get_object_or_404(Image, pk=image_id)
+        return render(request, self.template_name, context={'image': image.name, 'imgId': image.id})

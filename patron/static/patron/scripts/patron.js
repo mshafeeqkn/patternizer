@@ -79,9 +79,28 @@ function dragElement(draggerId) {
     }
 }
 
+let paperSizeList = {
+    "A1": [594, 841],
+    "A2": [420, 594],
+    "A3": [297, 420],
+    "A4": [210, 297],
+    "A5": [148, 210]
+};
+
 $(document).ready(function () {
     $('#add-label').on('click', function () {
         addNewLabel();
+    });
+
+    $('.paper-size-card').on('click', function () {
+        $('.paper-size-card').css('background', 'gray');
+        $(this).css('background', 'dodgerblue');
+        $('#paper-width').val(paperSizeList[$(this).text()][0]);
+        $('#paper-height').val(paperSizeList[$(this).text()][1]);
+    });
+
+    $('#submit-button').on('click', function () {
+        collectData();
     });
 });
 
@@ -110,10 +129,33 @@ function addNewLabel() {
     counter++;
 }
 
+function collectData() {
+    collectLabelData();
+    collectPaperSize();
+    collectNumCopies();
+    $('#patron-form').submit();
+}
 
-$('#text-field').val('Mohammed Shafeeque K N');
-addNewLabel();
-$('#text-field').val('Abdulla K N');
-addNewLabel();
-$('#text-field').val('9895653263');
-addNewLabel();
+function collectNumCopies() {
+    let row = $('#paper-row').val();
+    let col = $('#paper-col').val();
+    $('#copies-per-page').val("@$" + row + "$" + col);
+}
+
+function collectPaperSize() {
+    let width = $('#paper-width').val();
+    let height = $('#paper-height').val();
+    $('#paper-size').val("@$" + width + "$" + height);
+}
+
+function collectLabelData() {
+    let data = "";
+    $('#label-list > tbody tr').each(function () {
+        let label = $(this).find('td').eq(1).text();
+        let x_cod = $(this).find('td').eq(2).text();
+        let y_cod = $(this).find('td').eq(3).text();
+        data += "@$" + label + "$" + x_cod + "$" + y_cod;
+    });
+
+    $('#label-data').val(data);
+}
