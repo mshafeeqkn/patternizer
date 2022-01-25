@@ -17,37 +17,19 @@
 
 <body>
 <div class="container">
-  <h4>Add new text</h4>
+  <h4>Add Label</h4>
   <div class="row">
     <div class="col-4">
       <div class="form-group">
-        <label for="text-field">Add new text</label>
+        <label for="text-field">Add new label</label>
         <input type="text" name="text" class="form-control form-control-sm" id="text-field" placeholder="Text">
       </div>
     </div>
-
-    <div class="col-4">
-      <div class="form-group">
-        <label for="font">Select font</label>
-        <select class="form-control form-control-sm" name="font" id="font">
-          <option>None</option>
-        </select>
-      </div>
-    </div>
-
     <div class="col-1">
-      <button class="btn btn-primary btn-sm mt-fix-25">Add</button>
+      <button class="btn btn-primary btn-sm mt-fix-25" id="add-label">Add</button>
     </div>
   </div>
   <img src="/media/images/{{ image }}" alt="uploaded-image" id="image">
-
-  <div class="drag-item" id="drag-item">
-    <div>
-      <span class="drag-btn" id="drag-item-handle"><i class="fa fa-arrows text-success" aria-hidden="true"></i></span>
-      <span class="apply-btn"><i class="fa fa-check text-success" aria-hidden="true"></i></span>
-    </div>
-    <div class="drag-text">This is sample text</div>
-  </div>
 </div>
 
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -59,8 +41,22 @@
 <script src="{% static 'patron/scripts/patron.js' %}"></script>
 
 <script>
-    //Make the DIV element draggagle:
-    dragElement(document.getElementById("drag-item"));
+  var counter = 0;
+  function addNewLabel() {
+    var labelField = $('#text-field');
+    var label = labelField.val();
+    labelField.val("");
+    var textLabel = '<div class="drag-item" id="drag-item-' + counter + '">' +
+        '<div>' +
+          '<span class="drag-btn" id="drag-item-' + counter + '-handle"><i class="fa fa-arrows text-success" aria-hidden="true"></i></span>' +
+          '<span class="apply-btn"><i class="fa fa-check text-success" aria-hidden="true"></i></span>' +
+        '</div>' +
+        '<div class="drag-text">' + label + '</div>' +
+      '</div>';
+    $('.container').append(textLabel);
+    dragElement("drag-item-" + counter);
+    counter++;
+  }
 </script>
 
 </body>

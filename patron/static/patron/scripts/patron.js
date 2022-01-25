@@ -1,11 +1,19 @@
-function dragElement(elmnt) {
-    var x1 = 0, y1 = 0, x2 = 0, y2 = 0;
-    var imageSize = $('#image').get(0).getBoundingClientRect();
-    var textBoxSize = $('#drag-item').get(0).getBoundingClientRect();
+function dragElement(draggerId) {
+    let draggerElement = $('#' + draggerId);
 
-    elmnt.style.top = (imageSize.top + (imageSize.bottom - imageSize.top)/2) + "px";
-    elmnt.style.left = (imageSize.left + (imageSize.right - imageSize.left)/2)+ "px";
-    document.getElementById("drag-item-handle").onmousedown = dragMouseDown;
+    let x1 = 0, y1 = 0, x2 = 0, y2 = 0;
+    const imageSize = $('#image').get(0).getBoundingClientRect();
+    const draggerSize = draggerElement.get(0).getBoundingClientRect();
+
+    draggerElement.css(
+        {
+            'top': (imageSize.top + (imageSize.bottom - imageSize.top) / 2) + "px",
+            'left': (imageSize.left + (imageSize.right - imageSize.left) / 2) + "px"
+        }
+    );
+
+    $('#' + draggerId + "-handle").get(0).onmousedown = dragMouseDown;
+    registerApplyButton();
 
     function dragMouseDown(e) {
         e = e || window.event;
@@ -16,6 +24,7 @@ function dragElement(elmnt) {
         document.onmouseup = closeDragElement;
         // call a function whenever the cursor moves:
         document.onmousemove = elementDrag;
+        $('body').css('cursor', 'none');
     }
 
     function elementDrag(e) {
@@ -28,35 +37,42 @@ function dragElement(elmnt) {
         y2 = e.clientY;
 
         // set the element's new position:
-        var top = (elmnt.offsetTop - y1);
-        if(top > imageSize.top && top < imageSize.bottom - (textBoxSize.bottom - textBoxSize.top))
-          elmnt.style.top = top + "px";
+        const top = (draggerElement.get(0).offsetTop - y1);
+        if (top > imageSize.top && top < imageSize.bottom - (draggerSize.bottom - draggerSize.top))
+            draggerElement.get(0).style.top = top + "px";
 
-        var left = (elmnt.offsetLeft - x1);
-        if(left > imageSize.left && left < imageSize.right - (textBoxSize.right - textBoxSize.left))
-          elmnt.style.left = left + "px";
+        const left = (draggerElement.get(0).offsetLeft - x1);
+        if (left > imageSize.left && left < imageSize.right - (draggerSize.right - draggerSize.left))
+            draggerElement.get(0).style.left = left + "px";
     }
 
     function closeDragElement() {
         /* stop moving when mouse button is released:*/
         document.onmouseup = null;
         document.onmousemove = null;
+        $('body').css('cursor', '');
+    }
+
+    function registerApplyButton() {
+        $('.apply-btn').on('click', function () {
+            const btnSize = $(this).get(0).getBoundingClientRect();
+            const dragItem = $('#' + draggerId);
+            const draggerSize = dragItem.get(0).getBoundingClientRect();
+
+            $(this).hide();
+            $('.drag-btn').hide();
+
+            dragItem.css(
+                {
+                    'background-color': "rgba(255, 255, 255, 0)",
+                    'top': draggerSize.top + (btnSize.bottom - btnSize.top - 2) + 'px'
+                });
+        });
     }
 }
 
 $(document).ready(function () {
-    $('.apply-btn').on('click', function () {
-        var btnSize = $(this).get(0).getBoundingClientRect();
-        var dragItem = $('#drag-item');
-        var draggerSize = dragItem.get(0).getBoundingClientRect();
-
-        $(this).hide();
-        $('.drag-btn').hide();
-
-        dragItem.css(
-            {
-                'background-color': "rgba(255, 255, 255, 0)",
-                'top': draggerSize.top + (btnSize.bottom - btnSize.top - 2) + 'px'
-            });
+    $('#add-label').on('click', function () {
+        addNewLabel();
     });
 });
