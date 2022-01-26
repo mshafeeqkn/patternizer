@@ -102,6 +102,7 @@ $(document).ready(function () {
     $('#submit-button').on('click', function () {
         collectData();
     });
+    // loadTableData();
 });
 
 let counter = 0;
