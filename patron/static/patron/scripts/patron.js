@@ -135,9 +135,18 @@ function collectData() {
     ret.labels = collectLabelData();
     ret.paper = collectPaperSize();
     ret.copies = collectNumCopies();
+    ret.imgSize = collectImageSize();
     let jsonString = JSON.stringify(ret);
     $('#image-data').val(jsonString);
     $('#patron-form').submit();
+}
+
+function collectImageSize() {
+    let ret = {};
+    let img = $('#image').get(0);
+    ret.imgWidth = img.clientWidth;
+    ret.imgHeight = img.clientHeight;
+    return ret;
 }
 
 function collectNumCopies() {

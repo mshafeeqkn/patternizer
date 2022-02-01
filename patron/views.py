@@ -1,10 +1,13 @@
 import json
+from pathlib import Path
 
-from django.http import HttpResponse
+from PIL import Image as PILImage
+from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 
 from patron.models import Image
+from patron.patron_main import test_func
 
 
 class IndexView(View):
@@ -27,21 +30,23 @@ class ImageView(View):
     template_name = 'patron/image_view.html'
 
     @staticmethod
-    def _get_context_from_image(image):
+    def get_context_from_image(image):
         paper_size = json.loads(image.paper_size)
         num_img = json.loads(image.num_img)
-        labels = json.dumps(image.labels, ensure_ascii=False)
+        labels = json.loads(json.loads(json.dumps(image.labels, ensure_ascii=False)))
+        rend_size = json.loads(image.rend_size)
         return {
             'image': image.name,
             'imgId': image.pk,
             'paperSize': paper_size,
             'numImg': num_img,
-            'labels': labels
+            'labels': labels,
+            'rendSize': rend_size
         }
 
     def get(self, request, image_id):
         image = get_object_or_404(Image, pk=image_id)
-        context = self._get_context_from_image(image)
+        context = self.get_context_from_image(image)
         return render(request, self.template_name, context=context)
 
     def post(self, request, image_id):
@@ -50,12 +55,32 @@ class ImageView(View):
         image.labels = str(json_data['labels']).replace("'", '"')
         image.paper_size = str(json_data['paper']).replace("'", '"')
         image.num_img = str(json_data['copies']).replace("'", '"')
+        image.rend_size = str(json_data['imgSize']).replace("'", '"')
         image.save()
 
-        context = self._get_context_from_image(image)
-        return render(request, self.template_name, context=context)
+        # context = self._get_context_from_image(image)
+        return redirect('pdf_download', image_id)
+        # return render(request, self.template_name, context=context)
 
 
-class ImageDataView(View):
+class PdfDownloadView(View):
+    template_name = 'patron/pdf_download.html'
+
     def get(self, request, image_id):
-        return HttpResponse("{'key': 'value'}")
+        test_func(image_id)
+        return render(request, self.template_name)
+        db_image = get_object_or_404(Image, pk=image_id)
+        img_path = Path(db_image.image.file.name)
+        img_path = '{}/{}'.format(img_path.parent, db_image.name)
+        image = PILImage.open(img_path)
+        print('original: width: {}, height: {}'.format(image.width, image.height))
+        context = ImageView.get_context_from_image(db_image)
+        rend_size = context['rendSize']
+        print('rendered: width: {}, height: {}'.format(rend_size['imgWidth'], rend_size['imgHeight']))
+        for item in context['labels']:
+            print(item)
+        return render(request, self.template_name)
+
+    def post(self, request, image_id):
+        image = get_object_or_404(Image, pk=image_id)
+        return render(request, self.template_name)
