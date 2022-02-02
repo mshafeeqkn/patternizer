@@ -6,95 +6,99 @@
 {% block title %}Image Loader{% endblock %}
 {% block body %}
 
-<div class="container pb-4">
-  <h4>Add Label</h4>
-  <div class="row">
-    <div class="col-4">
-      <div class="form-group">
-        <label for="text-field">Add new label</label>
-        <input type="text" name="text" class="form-control form-control-sm" id="text-field" placeholder="Text">
-      </div>
-    </div>
-    <div class="col-1">
-      <button class="btn btn-primary btn-sm mt-fix-25" id="add-label">Add</button>
-    </div>
-  </div>
-  <img src="/media/images/{{ image }}" alt="uploaded-image" id="image">
+  <div class="container pb-4">
+    <h4 class="mt-fix-25">{{ image }}</h4>
 
-  <table class="table table-sm mt-4" id="label-list">
-    <thead class="thead-light">
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">Label</th>
-      <th scope="col">X-Coord</th>
-      <th scope="col">Y-Coord</th>
-      <th scope="col">Action</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-      <td colspan="5" class="text-center">List is empty</td>
-    </tr>
-    </tbody>
-  </table>
+    <table class="table table-sm mt-4" id="data-list">
+      <thead class="thead-light">
+      <tr>
+        <th scope="col">#</th>
+        {% for col in labels %}
+        <th scope="col">{{ col }}</th>
+        {% endfor %}
+      </tr>
+      </thead>
+      <tbody>
+        {% for row in imgData %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          {% for cell in row %}
+          <td>{{ cell }}</td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
 
-  <div class="mt-4">
-    <h4>Print paper size</h4>
-    <div>
-      <div class="paper-dim">
-        <input type="text" name="text" class="form-control form-control-sm" id="paper-width" placeholder="Width (mm)" value="{{ paperSize|lookup:'width' }}">
-      </div>
-      <span class="p-2">X</span>
-      <div class="paper-dim">
-        <input type="text" name="text" class="form-control form-control-sm" id="paper-height" placeholder="Height (mm)" value="{{ paperSize|lookup:'height' }}">
-      </div>
-    </div>
-    <div class="my-3">
-      <div class="paper-size-card">A1</div>
-      <div class="paper-size-card">A2</div>
-      <div class="paper-size-card">A3</div>
-      <div class="paper-size-card">A4</div>
-      <div class="paper-size-card">A5</div>
-    </div>
+    <img src="/media/images/{{ image }}" alt="uploaded-image" id="image">
+
+    <table class="table table-sm mt-4" id="label-list">
+      <thead class="thead-light">
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Label</th>
+        <th scope="col">X-Coord</th>
+        <th scope="col">Y-Coord</th>
+        <th scope="col">Action</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td colspan="5" class="text-center">List is empty</td>
+      </tr>
+      </tbody>
+    </table>
 
     <div class="mt-4">
-      <h4>Number of copies per page</h4>
+      <h4>Print paper size</h4>
       <div>
         <div class="paper-dim">
-          <input type="text" name="text" class="form-control form-control-sm" id="paper-row" placeholder="Number of rows" value="{{ numImg|lookup:'numRow' }}">
+          <input type="text" name="text" class="form-control form-control-sm" id="paper-width" placeholder="Width (mm)">
         </div>
         <span class="p-2">X</span>
         <div class="paper-dim">
-          <input type="text" name="text" class="form-control form-control-sm" id="paper-col" placeholder="Number of column" value="{{ numImg|lookup:'numCol' }}">
+          <input type="text" name="text" class="form-control form-control-sm" id="paper-height" placeholder="Height (mm)">
         </div>
       </div>
-    </div>
+      <div class="my-3">
+        <div class="paper-size-card">A1</div>
+        <div class="paper-size-card">A2</div>
+        <div class="paper-size-card">A3</div>
+        <div class="paper-size-card">A4</div>
+        <div class="paper-size-card">A5</div>
+      </div>
 
-    <div class="my-3">
-      <input class="btn btn-primary" type="button" value="Submit" id="submit-button">
-    </div>
+      <div class="mt-4">
+        <h4>Number of copies per page</h4>
+        <div>
+          <div class="paper-dim">
+            <input type="text" name="text" class="form-control form-control-sm" id="paper-row" placeholder="Number of rows">
+          </div>
+          <span class="p-2">X</span>
+          <div class="paper-dim">
+            <input type="text" name="text" class="form-control form-control-sm" id="paper-col" placeholder="Number of column">
+          </div>
+        </div>
+      </div>
 
-    <form method="post" action="{% url 'image_view' imgId %}" id="patron-form">
-      {% csrf_token %}
-      <input type="hidden" name="image-data" id="image-data">
-    </form>
+      <div class="my-3">
+        <input class="btn btn-primary" type="button" value="Submit" id="submit-button">
+      </div>
+
+      <form method="post" action="{% url 'image_view' imgId %}" id="patron-form">
+        {% csrf_token %}
+        <input type="hidden" name="image-data" id="image-data">
+      </form>
+    </div>
   </div>
-</div>
 {% endblock %}
 {% block custom_script %}
   <script src="{% static 'patron/scripts/patron.js' %}"></script>
   <script>
-    function loadTableData() {
-      let tableData = {{ labels|safe }};
-      let jsonObject = JSON.parse(tableData);
-      $("#label-list > tbody").empty();
-
-      for(let i in jsonObject) {
-        if(jsonObject.hasOwnProperty(i)) {
-          $('#label-list > tbody').append('<tr><td>' + (parseInt(i) + 1) + '</td><td>' + jsonObject[i].label +
-              '</td><td>' + jsonObject[i].x_cod + '</td><td>' + jsonObject[i].y_cod + '</td></tr>');
-        }
-      }
+    function addLabels() {
+        {% for label in labels %}
+        addNewLabel('{{ label }}');
+        {% endfor %}
     }
   </script>
 {% endblock %}

@@ -88,10 +88,6 @@ let paperSizeList = {
 };
 
 $(document).ready(function () {
-    $('#add-label').on('click', function () {
-        addNewLabel();
-    });
-
     $('.paper-size-card').on('click', function () {
         $('.paper-size-card').css('background', 'gray');
         $(this).css('background', 'dodgerblue');
@@ -102,14 +98,13 @@ $(document).ready(function () {
     $('#submit-button').on('click', function () {
         collectData();
     });
-    // loadTableData();
+
+    addLabels();
 });
 
 let counter = 0;
 
-function addNewLabel() {
-    let labelField = $('#text-field');
-    let label = labelField.val();
+function addNewLabel(label) {
     let textLabel = '<div class="drag-item" id="drag-item-' + counter + '">' +
         '<div>' +
             '<span class="drag-btn" id="drag-item-' + counter + '-handle"><i class="fa fa-arrows text-success" aria-hidden="true"></i></span>' +
@@ -118,8 +113,6 @@ function addNewLabel() {
         '<div class="drag-text" id="drag-text-' + counter + '">' + label + '</div>' +
     '</div>';
     $('.container').append(textLabel);
-
-    labelField.val("");
 
     if(counter === 0)
         $("#label-list > tbody").empty();
@@ -132,7 +125,6 @@ function addNewLabel() {
 
 function collectData() {
     let ret = {};
-    ret.labels = collectLabelData();
     ret.paper = collectPaperSize();
     ret.copies = collectNumCopies();
     ret.imgSize = collectImageSize();
@@ -160,17 +152,5 @@ function collectPaperSize() {
     let ret = {};
     ret.width = $('#paper-width').val();
     ret.height = $('#paper-height').val();
-    return ret;
-}
-
-function collectLabelData() {
-    let ret = [];
-    $('#label-list > tbody tr').each(function () {
-        let item = {};
-        item.label = $(this).find('td').eq(1).text();
-        item.x_cod = $(this).find('td').eq(2).text();
-        item.y_cod = $(this).find('td').eq(3).text();
-        ret.push(item);
-    });
     return ret;
 }

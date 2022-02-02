@@ -23,7 +23,11 @@ class GeneratePatron:
         self.register_fonts()
         self.padding = padding
         self.img_render_height = (self.paper_size[1] - 2 * self.num_row * self.padding) / self.num_row
+        if paper_size[1] < self.img_render_height:
+            self.img_render_height = paper_size[1]
         self.img_render_width = self.img_width * self.img_render_height / self.img_height
+        if paper_size[0] < self.img_render_width:
+            self.img_render_width = paper_size[0]
 
     def __del__(self):
         self.canvas.save()
@@ -45,7 +49,7 @@ class GeneratePatron:
 
         self.canvas.drawImage(self.bg_image, x, y, self.img_render_width, preserveAspectRatio=True, anchor='sw')
         self.canvas.setStrokeColor(HexColor(0xD3D3D3))
-        self.canvas.setLineWidth(0.5)
+        self.canvas.setLineWidth(0.1)
 
         # Horizontal line
         self.canvas.line(col * (self.paper_size[0] / self.num_col),
@@ -62,11 +66,11 @@ class GeneratePatron:
         self.canvas.setStrokeColor(HexColor(0))
 
 
-def test_func(image_id):
+def generate_patron(image_id, num_copies, paper_size=A4, padding=0):
     dir_name = '{}/{}'.format(settings.MEDIA_ROOT, 'pdf')
     file_name = '{}/generated_output.pdf'.format(dir_name)
     Path(dir_name).mkdir(parents=True, exist_ok=True)
-    gen = GeneratePatron(file_name=file_name, image_id=image_id, paper_size=A4, num_copies=(3, 1), padding=5)
-    for i in range(1):
-        for j in range(3):
+    gen = GeneratePatron(file_name=file_name, image_id=image_id, paper_size=paper_size, num_copies=num_copies, padding=padding)
+    for i in range(num_copies[1]):
+        for j in range(num_copies[0]):
             gen.set_background_image(row=j, col=i)

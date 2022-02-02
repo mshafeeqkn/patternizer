@@ -6,8 +6,8 @@ from patron.models import Image, LFont
 
 
 class ImageAdmin(admin.ModelAdmin):
-    fields = ['name', 'image', 'paper_size', 'num_img', 'labels', 'rend_size']
-    list_display = ['id', 'name', 'image', 'paper_size', 'num_img', 'labels', 'rend_size']
+    fields = ['name', 'image', 'data_file']
+    list_display = ['id', 'name', 'image', 'data_file']
 
 
 class LFontAdmin(admin.ModelAdmin):

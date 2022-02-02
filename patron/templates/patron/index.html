@@ -10,8 +10,14 @@
     <div class="row">
       <div class="col-4">
         <div class="form-group">
-          <label for="image-file">Please select new image</label>
+          <label for="image-file">Select the image</label>
           <input type="file" name="image-file" class="form-control-file" id="image-file">
+        </div>
+      </div>
+      <div class="col-4">
+        <div class="form-group">
+          <label for="data-file">Select data file(*.xls format)</label>
+          <input type="file" name="data-file" class="form-control-file" id="data-file">
         </div>
       </div>
       <div class="col-4">
@@ -27,7 +33,7 @@
       <tbody>
         {% for image in images %}
         <tr>
-          <td><a href="{% url 'image_view' image.id %}">{{ image.name }}</a></td>
+          <td><a href="{% url 'image_view' image.id %}">{{ image.name }} - {{ image.data.name }}</a></td>
         </tr>
         {% endfor %}
       </tbody>
