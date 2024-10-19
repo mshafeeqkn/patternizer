@@ -27,7 +27,7 @@ extern "C" {
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f1xx_ll_usb.h"
 
-#if defined (USB) || defined (USB_OTG_FS)
+#if defined (USB)
 
 /** @addtogroup STM32F1xx_HAL_Driver
   * @{
@@ -83,11 +83,6 @@ typedef enum
 #if defined (USB)
 
 #endif /* defined (USB) */
-#if defined (USB_OTG_FS)
-typedef USB_OTG_GlobalTypeDef  PCD_TypeDef;
-typedef USB_OTG_CfgTypeDef     PCD_InitTypeDef;
-typedef USB_OTG_EPTypeDef      PCD_EPTypeDef;
-#endif /* defined (USB_OTG_FS) */
 #if defined (USB)
 typedef USB_TypeDef        PCD_TypeDef;
 typedef USB_CfgTypeDef     PCD_InitTypeDef;
@@ -106,10 +101,6 @@ typedef struct
   PCD_TypeDef             *Instance;   /*!< Register base address             */
   PCD_InitTypeDef         Init;        /*!< PCD required parameters           */
   __IO uint8_t            USB_Address; /*!< USB Address                       */
-#if defined (USB_OTG_FS)
-  PCD_EPTypeDef           IN_ep[16];   /*!< IN endpoint parameters            */
-  PCD_EPTypeDef           OUT_ep[16];  /*!< OUT endpoint parameters           */
-#endif /* defined (USB_OTG_FS) */
 #if defined (USB)
   PCD_EPTypeDef           IN_ep[8];    /*!< IN endpoint parameters            */
   PCD_EPTypeDef           OUT_ep[8];   /*!< OUT endpoint parameters           */
@@ -199,31 +190,6 @@ typedef struct
 
 #define __HAL_PCD_GET_FLAG(__HANDLE__, __INTERRUPT__) \
   ((USB_ReadInterrupts((__HANDLE__)->Instance) & (__INTERRUPT__)) == (__INTERRUPT__))
-
-#if defined (USB_OTG_FS)
-#define __HAL_PCD_CLEAR_FLAG(__HANDLE__, __INTERRUPT__)    (((__HANDLE__)->Instance->GINTSTS) &= (__INTERRUPT__))
-#define __HAL_PCD_IS_INVALID_INTERRUPT(__HANDLE__)         (USB_ReadInterrupts((__HANDLE__)->Instance) == 0U)
-
-#define __HAL_PCD_UNGATE_PHYCLOCK(__HANDLE__) \
-  *(__IO uint32_t *)((uint32_t)((__HANDLE__)->Instance) + USB_OTG_PCGCCTL_BASE) &= ~(USB_OTG_PCGCCTL_STOPCLK)
-
-#define __HAL_PCD_GATE_PHYCLOCK(__HANDLE__) \
-  *(__IO uint32_t *)((uint32_t)((__HANDLE__)->Instance) + USB_OTG_PCGCCTL_BASE) |= USB_OTG_PCGCCTL_STOPCLK
-
-#define __HAL_PCD_IS_PHY_SUSPENDED(__HANDLE__) \
-  ((*(__IO uint32_t *)((uint32_t)((__HANDLE__)->Instance) + USB_OTG_PCGCCTL_BASE)) & 0x10U)
-
-#define __HAL_USB_OTG_FS_WAKEUP_EXTI_ENABLE_IT()    EXTI->IMR |= USB_OTG_FS_WAKEUP_EXTI_LINE
-#define __HAL_USB_OTG_FS_WAKEUP_EXTI_DISABLE_IT()   EXTI->IMR &= ~(USB_OTG_FS_WAKEUP_EXTI_LINE)
-#define __HAL_USB_OTG_FS_WAKEUP_EXTI_GET_FLAG()     EXTI->PR & (USB_OTG_FS_WAKEUP_EXTI_LINE)
-#define __HAL_USB_OTG_FS_WAKEUP_EXTI_CLEAR_FLAG()   EXTI->PR = USB_OTG_FS_WAKEUP_EXTI_LINE
-
-#define __HAL_USB_OTG_FS_WAKEUP_EXTI_ENABLE_RISING_EDGE() \
-  do { \
-    EXTI->FTSR &= ~(USB_OTG_FS_WAKEUP_EXTI_LINE); \
-    EXTI->RTSR |= USB_OTG_FS_WAKEUP_EXTI_LINE; \
-  } while(0U)
-#endif /* defined (USB_OTG_FS) */
 
 #if defined (USB)
 #define __HAL_PCD_CLEAR_FLAG(__HANDLE__, __INTERRUPT__)           (((__HANDLE__)->Instance->ISTR)\
@@ -396,10 +362,6 @@ PCD_StateTypeDef HAL_PCD_GetState(PCD_HandleTypeDef const *hpcd);
 /** @defgroup USB_EXTI_Line_Interrupt USB EXTI line interrupt
   * @{
   */
-#if defined (USB_OTG_FS)
-#define USB_OTG_FS_WAKEUP_EXTI_LINE                                   (0x1U << 18)  /*!< USB FS EXTI Line WakeUp Interrupt */
-#endif /* defined (USB_OTG_FS) */
-
 #if defined (USB)
 #define USB_WAKEUP_EXTI_LINE                                          (0x1U << 18)  /*!< USB FS EXTI Line WakeUp Interrupt */
 #endif /* defined (USB) */
@@ -446,32 +408,6 @@ PCD_StateTypeDef HAL_PCD_GetState(PCD_HandleTypeDef const *hpcd);
 /**
   * @}
   */
-
-#if defined (USB_OTG_FS)
-#ifndef USB_OTG_DOEPINT_OTEPSPR
-#define USB_OTG_DOEPINT_OTEPSPR                (0x1UL << 5)      /*!< Status Phase Received interrupt */
-#endif /* defined USB_OTG_DOEPINT_OTEPSPR */
-
-#ifndef USB_OTG_DOEPMSK_OTEPSPRM
-#define USB_OTG_DOEPMSK_OTEPSPRM               (0x1UL << 5)      /*!< Setup Packet Received interrupt mask */
-#endif /* defined USB_OTG_DOEPMSK_OTEPSPRM */
-
-#ifndef USB_OTG_DOEPINT_NAK
-#define USB_OTG_DOEPINT_NAK                    (0x1UL << 13)      /*!< NAK interrupt */
-#endif /* defined USB_OTG_DOEPINT_NAK */
-
-#ifndef USB_OTG_DOEPMSK_NAKM
-#define USB_OTG_DOEPMSK_NAKM                   (0x1UL << 13)      /*!< OUT Packet NAK interrupt mask */
-#endif /* defined USB_OTG_DOEPMSK_NAKM */
-
-#ifndef USB_OTG_DOEPINT_STPKTRX
-#define USB_OTG_DOEPINT_STPKTRX                (0x1UL << 15)      /*!< Setup Packet Received interrupt */
-#endif /* defined USB_OTG_DOEPINT_STPKTRX */
-
-#ifndef USB_OTG_DOEPMSK_NYETM
-#define USB_OTG_DOEPMSK_NYETM                  (0x1UL << 14)      /*!< Setup Packet Received interrupt mask */
-#endif /* defined USB_OTG_DOEPMSK_NYETM */
-#endif /* defined (USB_OTG_FS) */
 
 /* Private macros ------------------------------------------------------------*/
 /** @defgroup PCD_Private_Macros PCD Private Macros
@@ -1046,7 +982,7 @@ PCD_StateTypeDef HAL_PCD_GetState(PCD_HandleTypeDef const *hpcd);
 /**
   * @}
   */
-#endif /* defined (USB) || defined (USB_OTG_FS) */
+#endif /* defined (USB) */
 
 #ifdef __cplusplus
 }
